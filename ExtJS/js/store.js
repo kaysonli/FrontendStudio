@@ -44,4 +44,31 @@
 
         hasMany: 'OrderItem'
     });
+
+    var store = Ext.create('Ext.data.Store', {
+        model: "User"
+    });
+
+    store.load({
+        callback: function() {
+        //the user that was loaded
+        var user = store.first();
+
+        console.log("Orders for " + user.get('name') + ":")
+
+        //iterate over the Orders for each User
+        user.orders().each(function(order) {
+            console.log("Order ID: " + order.getId() + ", which contains items:");
+
+            //iterate over the OrderItems for each Order
+            order.orderItems().each(function(orderItem) {
+                //we know that the Product data is already loaded, so we can use the synchronous getProduct
+                //usually, we would use the asynchronous version (see Ext.data.association.BelongsTo)
+                var product = orderItem.getProduct();
+
+                console.log(orderItem.get('quantity') + ' orders of ' + product.get('name'));
+            });
+        });
+    }
+    });
 })();
